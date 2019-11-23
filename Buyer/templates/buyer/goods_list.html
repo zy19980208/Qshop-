@@ -1,0 +1,125 @@
+{% extends "buyer/base.html" %}
+{% block title%}
+    商品列表
+{% endblock %}
+
+{% block content %}
+    <div class="navbar_con">
+		<div class="navbar clearfix">
+			<div class="subnav_con fl">
+				<h1>全部商品分类</h1>
+				<span></span>
+				<ul class="subnav">
+					<li><a href="#" class="fruit">新鲜水果</a></li>
+					<li><a href="#" class="seafood">海鲜水产</a></li>
+					<li><a href="#" class="meet">猪牛羊肉</a></li>
+					<li><a href="#" class="egg">禽类蛋品</a></li>
+					<li><a href="#" class="vegetables">新鲜蔬菜</a></li>
+					<li><a href="#" class="ice">速冻食品</a></li>
+				</ul>
+			</div>
+			<ul class="navlist fl">
+				<li><a href="">首页</a></li>
+				<li class="interval">|</li>
+				<li><a href="">手机生鲜</a></li>
+				<li class="interval">|</li>
+				<li><a href="">抽奖</a></li>
+			</ul>
+		</div>
+	</div>
+
+    <div class="breadcrumb">
+		<a href="#">全部分类</a>
+		<span>></span>
+		<a href="#">新鲜水果</a>
+	</div>
+    {% if goods %}
+        <div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+                    {% for one in recommend %}
+					<li>
+						<a href="/Buyer/detail/{{ one.goods_store_id }}"><img src="/static/{{ one.picture }}"></a>
+						<h4><a href="#">{{ one.goods_name }}</a></h4>
+						<div class="prize">￥{{ one.goods_price }}</div>
+					</li>
+                       {% endfor %}
+
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<div class="sort_bar">
+				<a href="#" class="active">默认</a>
+				<a href="#">价格</a>
+				<a href="#">人气</a>
+			</div>
+
+			<ul class="goods_type_list clearfix">
+                {% for goods in page_list %}
+				<li>
+					<a href="/Buyer/detail/{{ goods.id }}"><img src="/static/{{ goods.picture }}"></a>
+					<h4><a href="/detail/">{{ goods.goods_name }}</a></h4>
+					<div class="operate">
+						<span class="prize">￥{{ goods.goods_price }}</span>
+						<span class="unit">16.80/500g</span>
+						<a id="{{ goods.id }}" class="add_goods" title="加入购物车" onclick="add_cart(this)"></a>
+					</div>
+				</li>
+                {% endfor %}
+
+			</ul>
+            <div class="pagenation" style="float: right;">
+
+			{% for page in page_all.page_range %}
+                <a href="/Buyer/goods_list/{{ page }}/?keywords={{ goods_type.id }}&req_type=findall" class="page-link">{{ page }}</a>
+            {% endfor %}
+
+            </div>
+		</div>
+	</div>
+        {% else %}
+        <p style="text-align: center; font-size: 30px;color: #a9aab1" >
+            敬请期待^-^
+        </p>
+        <br>
+        <p style="text-align: center;font-size: 15px;color: black">
+            或许您需要：
+            <a href="/Buyer/goods_list/?keywords=1&req_type=findall">苹果</a>
+            <a href="/Buyer/goods_list/?keywords=2&req_type=findall">白菜</a>
+            <a href="/Buyer/goods_list/?keywords=3&req_type=findall">猪肉</a>
+        </p>
+    {% endif %}
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        function add_cart(obj){
+            var goods_id = obj.id;
+            console.log(goods_id);
+            url = '/Buyer/add_cart/';
+            send_data = {
+                'goods_id':goods_id,
+                'csrfmiddlewaretoken':'{{ csrf_token }}'
+            };
+            $.ajax(
+                {
+                    url:url,
+                    type:"post",
+                    data:send_data,
+                    success:function(data){
+                        console.log(data)
+                    },
+                    error:function(error){
+                        console.log(error)
+                    }
+
+                }
+            )
+        }
+    </script>
+{% endblock %}
